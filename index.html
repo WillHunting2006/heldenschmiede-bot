@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Heldenschmiede – Jetzt bewerben</title>
+<style>
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body {
+    min-height:100vh;
+    background:#111111;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    font-family:Arial,sans-serif;
+    padding:20px;
+  }
+  @keyframes bounce{0%,60%,100%{transform:translateY(0)}30%{transform:translateY(-5px)}}
+  @keyframes fadeUp{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+  @keyframes pulse{0%,100%{opacity:1}50%{opacity:0.4}}
+  .msg{animation:fadeUp 0.25s ease forwards}
+  #send:hover{background:#00ffaa!important}
+  #startBtn:hover{background:#00ffaa!important;transform:translateY(-2px)}
+  #msgInput:focus{outline:none;border-color:#00E887!important}
+  ::-webkit-scrollbar{width:3px}
+  ::-webkit-scrollbar-thumb{background:#333;border-radius:2px}
+</style>
+</head>
+<body>
+<div style="width:100%;max-width:460px;background:#1a1a1a;border-radius:18px;border:1px solid #222;overflow:hidden;display:flex;flex-direction:column;height:580px;box-shadow:0 20px 60px rgba(0,0,0,0.5);">
+
+  <div style="padding:14px 18px;border-bottom:1px solid #222;display:flex;align-items:center;gap:12px;background:#111;">
+    <div style="width:40px;height:40px;border-radius:10px;background:#00E887;display:flex;align-items:center;justify-content:center;font-size:18px;font-weight:900;color:#111;font-family:Arial Black,Arial;flex-shrink:0;">H</div>
+    <div>
+      <div style="color:#f0f0f0;font-weight:700;font-size:14px;">Heldenschmiede</div>
+      <div style="display:flex;align-items:center;gap:5px;margin-top:2px;">
+        <div style="width:6px;height:6px;border-radius:50%;background:#00E887;animation:pulse 2s infinite;"></div>
+        <span style="color:#555;font-size:11px;letter-spacing:0.4px;">Recruiting-Assistent · Online</span>
+      </div>
+    </div>
+    <div style="margin-left:auto;text-align:right;">
+      <div style="color:#00E887;font-size:11px;letter-spacing:1px;">14€/h</div>
+      <div style="color:#444;font-size:10px;">FLEXIBLE JOBS</div>
+    </div>
+  </div>
+
+  <div id="messages" style="flex:1;overflow-y:auto;padding:18px 14px;display:flex;flex-direction:column;gap:10px;">
+    <div id="startScreen" style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:18px;text-align:center;padding:16px;">
+      <div style="width:60px;height:60px;border-radius:14px;background:#00E887;display:flex;align-items:center;justify-content:center;font-size:28px;font-weight:900;color:#111;font-family:Arial Black,Arial;">H</div>
+      <div>
+        <div style="color:#f0f0f0;font-size:16px;font-weight:700;margin-bottom:6px;">Bewerbung starten</div>
+        <div style="color:#555;font-size:12px;line-height:1.6;max-width:260px;">Unser KI-Assistent führt dich in 2 Minuten durch die Bewerbung. Locker, schnell, per Chat.</div>
+      </div>
+      <div style="display:flex;gap:7px;flex-wrap:wrap;justify-content:center;">
+        <span style="background:#222;border:1px solid #2a2a2a;border-radius:20px;padding:4px 11px;color:#555;font-size:11px;">🏟️ Stadion</span>
+        <span style="background:#222;border:1px solid #2a2a2a;border-radius:20px;padding:4px 11px;color:#555;font-size:11px;">🎪 Events</span>
+        <span style="background:#222;border:1px solid #2a2a2a;border-radius:20px;padding:4px 11px;color:#555;font-size:11px;">🎯 Messen</span>
+        <span style="background:#222;border:1px solid #2a2a2a;border-radius:20px;padding:4px 11px;color:#555;font-size:11px;">🍽️ Catering</span>
+      </div>
+      <button id="startBtn" onclick="startChat()" style="background:#00E887;color:#111;border:none;border-radius:11px;padding:13px 30px;font-size:14px;font-weight:900;cursor:pointer;transition:all 0.2s;font-family:Arial Black,Arial;">Jetzt bewerben →</button>
+    </div>
+  </div>
+
+  <div id="inputArea" style="display:none;padding:10px 14px;border-top:1px solid #222;background:#111;gap:8px;align-items:flex-end;">
+    <textarea id="msgInput" placeholder="Schreib deine Antwort..." rows="1" style="flex:1;background:#1a1a1a;border:1px solid #2a2a2a;border-radius:11px;padding:9px 13px;color:#e0e0e0;font-size:13px;resize:none;line-height:1.5;font-family:Arial;max-height:80px;transition:border 0.2s;width:calc(100% - 46px);" onkeydown="handleKey(event)"></textarea>
+    <button id="send" onclick="sendMsg()" style="width:38px;height:38px;border-radius:10px;background:#1e1e1e;border:none;cursor:default;display:flex;align-items:center;justify-content:center;color:#444;transition:all 0.2s;flex-shrink:0;">
+      <svg width="16" height="16" viewBox="0 0 18 18" fill="none"><path d="M16 9L2 2l3 7-3 7 14-7z" fill="currentColor"/></svg>
+    </button>
+  </div>
+</div>
+
+<script>
+const SYSTEM = `Du bist der freundliche Recruiting-Assistent der Heldenschmiede – einem Personaldienstleister, der junge Menschen (Schüler ab 18, Abiturienten, Studenten, Azubis) als flexible Arbeitskräfte vermittelt.
+
+Deine Aufgabe: Bewerber Schritt für Schritt vorqualifizieren – locker, sympathisch, auf Augenhöhe. Keine langen Texte, kurze Nachrichten wie im WhatsApp-Chat.
+
+WICHTIG: Stelle immer NUR EINE Frage pro Nachricht. Warte auf die Antwort, bevor du weitermachst.
+
+Ablauf:
+1. Herzlich begrüßen, kurz erklären was die Heldenschmiede macht (14€/h, flexible Jobs bei Events, Stadion, Messen, Catering etc.)
+2. Namen fragen
+3. Alter fragen (muss mindestens 18 sein)
+4. Wohnort / Region fragen (aktiv in: Mannheim, Ludwigshafen, Heidelberg, Karlsruhe, Baden-Baden, Pfalz, Deidesheim)
+5. Ob Student, Schüler, Azubi oder anderes
+6. Wann ungefähr verfügbar (Wochentage, Wochenende, beides?)
+7. Ob Vorerfahrung in Service, Lager, Events etc.
+8. Kurzes positives Fazit + Schnuppertag vorschlagen + sagen dass sich jemand vom Team meldet
+
+AUSSCHLUSSKRITERIEN (höflich absagen):
+- Unter 18 Jahre
+- Wohnort außerhalb der genannten Regionen
+- Sucht Vollzeitstelle oder Fachkraftstelle
+
+Ton: jung, direkt, freundlich, mit Emojis – wie ein Kollege, nicht wie ein Amt.
+Antworte immer auf Deutsch.`;
+
+let history = [];
+let loading = false;
+
+function addBubble(role, text) {
+  const msgs = document.getElementById('messages');
+  const wrap = document.createElement('div');
+  wrap.className = 'msg';
+  wrap.style.cssText = `display:flex;justify-content:${role==='user'?'flex-end':'flex-start'};`;
+  const inner = role === 'assistant' ? `<div style="width:26px;height:26px;border-radius:7px;background:#00E887;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:900;color:#111;margin-right:7px;margin-top:2px;flex-shrink:0;font-family:Arial Black,Arial;">H</div>` : '';
+  wrap.innerHTML = `${inner}<div style="max-width:74%;padding:9px 13px;border-radius:${role==='user'?'15px 15px 4px 15px':'15px 15px 15px 4px'};background:${role==='user'?'#00E887':'#242424'};border:${role==='user'?'none':'1px solid #2a2a2a'};color:${role==='user'?'#111':'#d4d4d4'};font-size:13px;line-height:1.6;white-space:pre-wrap;word-break:break-word;font-weight:${role==='user'?600:400};">${text}</div>`;
+  msgs.appendChild(wrap);
+  msgs.scrollTop = msgs.scrollHeight;
+}
+
+function showTyping() {
+  const msgs = document.getElementById('messages');
+  const wrap = document.createElement('div');
+  wrap.id = 'typing';
+  wrap.style.cssText = 'display:flex;align-items:flex-start;';
+  wrap.innerHTML = `<div style="width:26px;height:26px;border-radius:7px;background:#00E887;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:900;color:#111;margin-right:7px;flex-shrink:0;font-family:Arial Black,Arial;">H</div>
+    <div style="background:#242424;border:1px solid #2a2a2a;border-radius:15px 15px 15px 4px;padding:12px 15px;display:flex;gap:4px;align-items:center;">
+      ${[0,1,2].map(i=>`<div style="width:6px;height:6px;border-radius:50%;background:#00E887;animation:bounce 1.2s infinite;animation-delay:${i*0.2}s;opacity:0.7;"></div>`).join('')}
+    </div>`;
+  msgs.appendChild(wrap);
+  msgs.scrollTop = msgs.scrollHeight;
+}
+
+function removeTyping() {
+  const t = document.getElementById('typing');
+  if(t) t.remove();
+}
+
+async function callClaude(msgs) {
+  const r = await fetch('/api/chat', {
+    method:'POST',
+    headers:{'Content-Type':'application/json'},
+    body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:500,system:SYSTEM,messages:msgs})
+  });
+  const d = await r.json();
+  return d.content?.[0]?.text || 'Ups, da lief was schief. Versuch nochmal! 🙈';
+}
+
+async function startChat() {
+  document.getElementById('startScreen').style.display = 'none';
+  const ia = document.getElementById('inputArea');
+  ia.style.display = 'flex';
+  loading = true;
+  showTyping();
+  history = [{role:'user',content:'Hallo, ich interessiere mich für einen Job.'}];
+  const reply = await callClaude(history);
+  removeTyping();
+  history.push({role:'assistant',content:reply});
+  addBubble('assistant', reply);
+  loading = false;
+  updateSend();
+  document.getElementById('msgInput').focus();
+}
+
+async function sendMsg() {
+  const inp = document.getElementById('msgInput');
+  const text = inp.value.trim();
+  if(!text || loading) return;
+  inp.value = '';
+  inp.style.height = 'auto';
+  addBubble('user', text);
+  history.push({role:'user',content:text});
+  loading = true;
+  updateSend();
+  showTyping();
+  const reply = await callClaude(history);
+  removeTyping();
+  history.push({role:'assistant',content:reply});
+  addBubble('assistant', reply);
+  loading = false;
+  updateSend();
+  document.getElementById('msgInput').focus();
+}
+
+function updateSend() {
+  const inp = document.getElementById('msgInput');
+  const btn = document.getElementById('send');
+  const hasText = inp.value.trim().length > 0 && !loading;
+  btn.style.background = hasText ? '#00E887' : '#1e1e1e';
+  btn.style.color = hasText ? '#111' : '#444';
+  btn.style.cursor = hasText ? 'pointer' : 'default';
+}
+
+function handleKey(e) {
+  if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();sendMsg();}
+}
+
+document.getElementById('msgInput').addEventListener('input', function(){
+  this.style.height='auto';
+  this.style.height=Math.min(this.scrollHeight,80)+'px';
+  updateSend();
+});
+</script>
+</body>
+</html>
